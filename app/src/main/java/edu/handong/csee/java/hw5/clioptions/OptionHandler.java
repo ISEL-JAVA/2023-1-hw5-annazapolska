@@ -182,7 +182,7 @@ public class OptionHandler {
 		// automatically generate the help statement
 		HelpFormatter formatter = new HelpFormatter();
 		String header = "Math Calculator";
-		String footer ="\nThis is the 2023-1 HW4 help page.";
+		String footer ="\nThis is the 2023-1 HW5 help page.";
 		formatter.printHelp("calculator", header, options, footer, true);
 	}
 }
