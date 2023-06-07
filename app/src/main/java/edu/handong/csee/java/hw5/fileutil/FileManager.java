@@ -37,7 +37,7 @@ public class FileManager {
 		
 		try {
 			FileReader fileReader;
-			fileReader = new FileReader(optionHandler.getDataInputFilePath());
+			fileReader = new FileReader(fileName);
 			CSVParser csvParser;
 			csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT);
 			String line;
@@ -95,7 +95,7 @@ public class FileManager {
 	 * @param arrayList is an array containing the data to write to the file
 	 */
 	public static void writeAtxtFile(String fileName, ArrayList<String> arrayList) {
-		try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.DEFAULT)) {
+		try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.DEFAULT.withQuote(null))) {
 
             for (String line : arrayList) {
                 csvPrinter.printRecord(line);
