@@ -164,6 +164,37 @@ public class Calculator {
 				
 				FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
 			}
+			
+			//when the Max option is used
+			else if (engineName.equals("MAX") && optionHandler.getDataInputFilePath()!=null && optionHandler.getDataOutputFilePath()!=null) {
+				if(optionHandler.getInputValues()!=null) {
+					optionHandler.printHelp(options);
+					System.exit(1);
+				}
+				ArrayList<String> list = FileManager.readLinesFromATxtFile(optionHandler.getDataInputFilePath());
+				ArrayList<String> updatedList = new ArrayList<String>();
+				//adding the headers to the new file
+				updatedList.add(list.get(0)); 
+				updatedList.add("\n");
+				
+				for (int i=1; i<list.size(); i++) {
+					String[] array=list.get(i).split(",");
+					engine.setInput(array);
+					engine.compute();
+					updatedList.add(String.valueOf(engine.getResult()));
+					
+					for (int j=0; j<array.length; j++) {
+						String[] inputNumber = {engineName, array[j]};
+						engine.setInput(inputNumber);
+						engine.compute();
+						updatedList.add(String.valueOf(engine.getResult()));
+						updatedList.add("\n");
+					}
+					updatedList.add("\n");
+				}
+				
+				FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
+			}
 
 			//all the other scenarios 
 			else {
