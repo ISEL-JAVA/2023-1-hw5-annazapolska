@@ -110,9 +110,9 @@ public class OptionHandler {
 
 		// add options by using OptionBuilder
 		options.addOption(Option.builder("i").longOpt("ipath")
-				.desc("Set a path for a data input file. It must work with -t SQRT and -o options together. e.g., -t SQRT -i file.csv -o output.csv")
+				.desc("Set a path for a data input file. It must work with -t SQRT, -t MAX, or -t MIN and -o options together. e.g., -t SQRT -i file.csv -o output.csv")
 				.hasArg()
-				.argName("A data file path to read")
+				.argName("A data file/directory path to read")
 				.build());
 		
 		// add options by using OptionBuilder
