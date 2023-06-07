@@ -176,7 +176,7 @@ public class Calculator {
 				ArrayList<String> list = FileManager.readLinesFromATxtFile(optionHandler.getDataInputFilePath());
 				ArrayList<String> updatedList = new ArrayList<String>();
 			    
-				updatedList.add(list.get(0)+","+"max");
+				updatedList.add(list.get(0)+","+"MAX");
 			    
 				for (int i=1; i<list.size(); i++) {
 					String[] array = list.get(i).split(",");
@@ -201,7 +201,7 @@ public class Calculator {
 				ArrayList<String> list = FileManager.readLinesFromATxtFile(optionHandler.getDataInputFilePath());
 				ArrayList<String> updatedList = new ArrayList<String>();
 			    
-				updatedList.add(list.get(0)+","+"min");
+				updatedList.add(list.get(0)+","+"MIN");
 			    
 				for (int i=1; i<list.size(); i++) {
 					String[] array = list.get(i).split(",");
