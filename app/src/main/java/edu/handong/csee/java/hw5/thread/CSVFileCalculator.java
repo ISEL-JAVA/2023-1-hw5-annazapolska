@@ -1,17 +1,20 @@
 package edu.handong.csee.java.hw5.thread;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 import edu.handong.csee.java.hw5.clioptions.OptionHandler;
-import edu.handong.csee.java.hw5.fileutil.FileManager;
+import edu.handong.csee.java.hw5.engines.Computable;
 
 public class CSVFileCalculator implements Runnable {
 	
@@ -59,15 +62,41 @@ public class CSVFileCalculator implements Runnable {
 	
 	
 	public void writeCSV(String filePath, ArrayList<ArrayList<String>> csvData) {
-		
+	    try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(filePath), CSVFormat.DEFAULT.withQuote(null))) {
+
+	        for (ArrayList<String> row : csvData) {
+	            csvPrinter.printRecord(row);
+	        }
+
+	        System.out.println("The " + filePath + " file has been successfully written.");
+	    } catch (IOException e) {
+	        System.out.println("An error occurred while writing data to the file: " + filePath);
+	        e.printStackTrace();
+	    }
 	}
 	
-	public void calculate() { //a method for calculating SQRT, MAX, and MIN tasks
-		
+	public void calculate(String engineName, ArrayList<ArrayList<String>> csvData, Computable engine ) { //a method for calculating SQRT, MAX, and MIN tasks
+		if (engineName=="SQRT") {
+			for (int i=1; i<csvData.size(); i++) {
+				ArrayList<String> row = csvData.get(i);
+				for (int j=1; j<row.size(); j++) {
+					String[] inputNumber = {engineName, row.get(j)};
+					engine.setInput(inputNumber);
+					engine.compute();
+				}
+						
+			}
+				
+		}
 	}
 		
 	@Override
 	public void run() {
+		File directory = new File(directoryPath);
+	    File[] files = directory.listFiles();
+
+	    if (files != null && files.length > 0) {
+	        File file = files[0];
 		 
 		// TODO Auto-generated method stub
 		
