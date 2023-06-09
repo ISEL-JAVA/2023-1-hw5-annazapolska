@@ -23,8 +23,12 @@ import edu.handong.csee.java.hw5.exceptions.NegativeNumberException;
 import edu.handong.csee.java.hw5.exceptions.OneInputException;
 import edu.handong.csee.java.hw5.fileutil.FileManager;
 import edu.handong.csee.java.hw5.thread.CSVFileCalculator;
+
 /**
- * This class defines a class to compute various operations with engines.
+ * This class defines a calculator that can perform various operations using different engines.
+ * The calculator supports operations such as LCM, GCD, SQRT, FACTORIAL, FIBONACCI, MAX, MIN, CUBEVOL, and SPHEREVOL.
+ * The calculator can take input values as command-line arguments or read values from input files.
+ * The results can be printed to the console or written to an output file.
  */
 public class Calculator {
 
