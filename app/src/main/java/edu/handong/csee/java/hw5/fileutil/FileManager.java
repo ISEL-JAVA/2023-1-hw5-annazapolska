@@ -25,7 +25,9 @@ public class FileManager {
 	/**
 	 * This class reads information from the file and returns an arrayList containing the data
 	 * @param fileName is the name of the file to read from 
-	 * @return
+	 * @return returns arrayList containing strings of rows from the input file
+	 * @throws IOException 
+	 * @throws FileNotFoundException
 	 */
 	public static ArrayList<String> readLinesFromATxtFile(String fileName) {
 		OptionHandler optionHandler = new OptionHandler();
@@ -58,12 +60,12 @@ public class FileManager {
 	         
 	         
 		} catch (FileNotFoundException e) {
-			System.out.println("Could not find the file");
+			//System.out.println("Could not find the file");
 			optionHandler.printHelp(options);
 	        System.exit(1);
 			//e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Error reading file: " + fileName);
+			//System.out.println("Error reading file: " + fileName);
 			optionHandler.printHelp(options);
 	        System.exit(1);
 			//e.printStackTrace();
@@ -93,6 +95,7 @@ public class FileManager {
 	 * This function writes the information to the file
 	 * @param fileName is the name for the file to write to 
 	 * @param arrayList is an array containing the data to write to the file
+	 * @throws IOException 
 	 */
 	public static void writeAtxtFile(String fileName, ArrayList<String> arrayList) {
 		try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.DEFAULT.withQuote(null))) {
