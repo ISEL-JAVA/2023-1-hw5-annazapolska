@@ -1,14 +1,28 @@
 package edu.handong.csee.java.hw5;
 
-import edu.handong.csee.java.hw5.engines.*;
-
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.Options;
+
 import edu.handong.csee.java.hw5.clioptions.OptionHandler;
-import edu.handong.csee.java.hw5.exceptions.*;
+import edu.handong.csee.java.hw5.engines.Computable;
+import edu.handong.csee.java.hw5.engines.CubeVolEngine;
+import edu.handong.csee.java.hw5.engines.FactorialEngine;
+import edu.handong.csee.java.hw5.engines.FibonacciEngine;
+import edu.handong.csee.java.hw5.engines.GCDEngine;
+import edu.handong.csee.java.hw5.engines.LCMEngine;
+import edu.handong.csee.java.hw5.engines.MaxEngine;
+import edu.handong.csee.java.hw5.engines.MinEngine;
+import edu.handong.csee.java.hw5.engines.SQRTEngine;
+import edu.handong.csee.java.hw5.engines.SphereVolEngine;
+import edu.handong.csee.java.hw5.exceptions.InvalidCommandException;
+import edu.handong.csee.java.hw5.exceptions.MinimumInputNumberException;
+import edu.handong.csee.java.hw5.exceptions.MyNumberFormatException;
+import edu.handong.csee.java.hw5.exceptions.NegativeNumberException;
+import edu.handong.csee.java.hw5.exceptions.OneInputException;
 import edu.handong.csee.java.hw5.fileutil.FileManager;
+import edu.handong.csee.java.hw5.thread.CSVFileCalculator;
 /**
  * This class defines a class to compute various operations with engines.
  */
@@ -133,6 +147,39 @@ public class Calculator {
 				engine.setInput(inputs);
 				engine.compute();
 			}
+			
+			// ...
+
+			// if the data input and output file paths are provided
+			else if (optionHandler.getDataInputFilePath() != null && optionHandler.getDataOutputFilePath() != null && optionHandler.getInputValues() == null) {
+			    int numThreads = 10;
+			    Thread[] threads = new Thread[numThreads];
+
+			    File inputFile = new File(optionHandler.getDataInputFilePath());
+
+			    if (inputFile.isDirectory()) {
+			        // Process all files in the directory
+			        File[] files = inputFile.listFiles();
+
+			        if (files != null && files.length > 0) {
+			            for (File file : files) {
+			                if (file.isFile()) {
+			                    // Create a CSVFileCalculator instance for each file
+			                    CSVFileCalculator calculator = new CSVFileCalculator(file.getAbsolutePath(), optionHandler.getDataOutputFilePath());
+			                    Thread thread = new Thread(calculator);
+			                    thread.start();
+			                }
+			            }
+			        }
+			    
+			    } else if (inputFile.isFile()) {
+			        // Process a single file
+			        CSVFileCalculator calculator = new CSVFileCalculator(optionHandler.getDataInputFilePath(), optionHandler.getDataOutputFilePath());
+			        threads[0] = new Thread(calculator);
+			        threads[0].start();
+			    }
+			}
+
 
 			//when input and output files are provided for the SQRT engine
 			else if (engineName.equals("SQRT") && optionHandler.getDataInputFilePath()!=null && optionHandler.getDataOutputFilePath()!=null) {
@@ -218,6 +265,7 @@ public class Calculator {
 				FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
 			}
 
+			//if the file path is provided
 
 			//all the other scenarios 
 			else {
