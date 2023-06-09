@@ -156,7 +156,8 @@ public class Calculator {
 			    Thread[] threads = new Thread[numThreads];
 
 			    File inputFile = new File(optionHandler.getDataInputFilePath());
-
+			    File outputFile = new File(optionHandler.getDataOutputFilePath());
+			    
 			    if (inputFile.isDirectory()) {
 			        // Process all files in the directory
 			        File[] files = inputFile.listFiles();
@@ -165,7 +166,7 @@ public class Calculator {
 			            for (File file : files) {
 			                if (file.isFile()) {
 			                    // Create a CSVFileCalculator instance for each file
-			                    CSVFileCalculator calculator = new CSVFileCalculator(file.getAbsolutePath(), optionHandler.getDataOutputFilePath());
+			                    CSVFileCalculator calculator = new CSVFileCalculator(file.getAbsolutePath(), outputFile.getAbsolutePath());
 			                    Thread thread = new Thread(calculator);
 			                    thread.start();
 			                }
@@ -174,7 +175,7 @@ public class Calculator {
 			    
 			    } else if (inputFile.isFile()) {
 			        // Process a single file
-			        CSVFileCalculator calculator = new CSVFileCalculator(optionHandler.getDataInputFilePath(), optionHandler.getDataOutputFilePath());
+			        CSVFileCalculator calculator = new CSVFileCalculator( inputFile.getAbsolutePath(),  outputFile.getAbsolutePath());
 			        threads[0] = new Thread(calculator);
 			        threads[0].start();
 			    }
