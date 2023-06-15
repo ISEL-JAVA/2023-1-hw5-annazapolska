@@ -156,23 +156,25 @@ public class Calculator {
 
 			// if the data input and output file paths are provided
 			else if (optionHandler.getDataInputFilePath() != null && optionHandler.getDataOutputFilePath() != null && optionHandler.getInputValues() == null) {
-			    int numThreads = 10;
-			    Thread[] threads = new Thread[numThreads];
 			    ArrayList<CSVFileCalculator> calculators = new ArrayList<>(); //array of CSVFileCalculator instances for each of the files
 
 			    File inputFile = new File(optionHandler.getDataInputFilePath());
 			    File outputFile = new File(optionHandler.getDataOutputFilePath());
 			    
+			    File[] files = inputFile.listFiles();
+			    int numFiles = files.length;
+		        int numThreads = files.length;
+			    Thread[] threads = new Thread[numThreads];
+			    
 			    //if the inputPath is a directory
 			    if (inputFile.isDirectory()) {
 			        // Process all files in the directory
-			        File[] files = inputFile.listFiles();
 
 			        if (files != null && files.length > 0) {
 			            for (File file : files) {
 			                if (file.isFile()) {
 			                    // Create a CSVFileCalculator instance for each file
-			                    CSVFileCalculator calculator = new CSVFileCalculator(engineName, file.getAbsolutePath(), outputFile.getAbsolutePath());
+			                    CSVFileCalculator calculator = new CSVFileCalculator(engineName,inputFile, file, outputFile);
 			                    calculators.add(calculator); //add new calculator to the array of CSVFile Calculators
 			                    Thread thread = new Thread(calculator);
 			                    thread.start();
@@ -256,6 +258,10 @@ public class Calculator {
 						FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
 					}
 
+			    }
+			    else {
+			    	optionHandler.printHelp(options);
+					System.exit(1);
 			    }
 			}
 

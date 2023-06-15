@@ -1,5 +1,6 @@
 package edu.handong.csee.java.hw5.thread;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -25,7 +26,7 @@ import edu.handong.csee.java.hw5.engines.Computable;
 public class CSVFileCalculator implements Runnable {
 	private String inputFilePath;
 	private String outputFilePath;
-	private String outputFileName;
+	//private String outputFileName;
 	private String engineName;
 	private ArrayList<ArrayList<String>> csvData;
 
@@ -36,10 +37,16 @@ public class CSVFileCalculator implements Runnable {
 	 * @param inputFilePath		 the path to the input CSV file
 	 * @param outputFilePath     the output CSV file path
 	 */
-	public CSVFileCalculator(String engineName, String inputFilePath, String outputFilePath){
-		this.inputFilePath = inputFilePath;
-		this.outputFilePath = outputFilePath;
-		this.outputFileName = inputFilePath + "-" + outputFilePath + ".csv";
+	public CSVFileCalculator(String engineName, File directoryPath, File inputFile, File outputFile){
+		//extracting the names of the input and output file without the ".csv" extensions
+		String inputFileName = inputFile.getName().replace(".csv", "");
+		String outputFileName = outputFile.getName().replace(".csv", "");
+		
+		this.inputFilePath = inputFile.getAbsolutePath();
+		
+		outputFileName = inputFileName + "-" + outputFileName + ".csv";
+		this.outputFilePath = directoryPath.getAbsolutePath() + "\\" + outputFileName;
+		System.out.println(outputFilePath);
 		this.engineName = engineName;
 	}
 
@@ -79,17 +86,17 @@ public class CSVFileCalculator implements Runnable {
 	 * Retrieves the output file name.
 	 * @return the output file name
 	 */
-	public String getOutputFileName() {
-		return outputFileName;
-	}
-
-	/**
-	 * Sets the output file name.
-	 * @param outputFileName the output file name to set
-	 */
-	public void setOutputFileName(String outputFileName) {
-		this.outputFileName = outputFileName;
-	}
+//	public String getOutputFileName() {
+//		return outputFileName;
+//	}
+//
+//	/**
+//	 * Sets the output file name.
+//	 * @param outputFileName the output file name to set
+//	 */
+//	public void setOutputFileName(String outputFileName) {
+//		this.outputFileName = outputFileName;
+//	}
 
 	/**
 	 * Retrieves the calculation engine name.
@@ -153,12 +160,12 @@ public class CSVFileCalculator implements Runnable {
 			fileReader.close();
 
 		} catch (FileNotFoundException e) {
-			//System.out.println("Could not find the file");
+			System.out.println("Could not find the file "+ filePath);
 			optionHandler.printHelp(options);
 			System.exit(1);
 			//e.printStackTrace();
 		} catch (IOException e) {
-			//System.out.println("Error reading file: " + filePath);
+			System.out.println("Error reading file: " + filePath);
 			optionHandler.printHelp(options);
 			System.exit(1);
 			//e.printStackTrace();
@@ -194,7 +201,7 @@ public class CSVFileCalculator implements Runnable {
 	 * @param engineName the name of the calculation engine
 	 * @param csvData the CSV data to perform calculations on
 	 */
-	public void calculate(String engineName, ArrayList<ArrayList<String>> csvData) { //a method for calculating SQRT, MAX, and MIN tasks
+	public  ArrayList<ArrayList<String>> calculate(String engineName, ArrayList<ArrayList<String>> csvData) { //a method for calculating SQRT, MAX, and MIN tasks
 		ArrayList<ArrayList<String>> updatedList = new ArrayList<>();
 
 
@@ -270,6 +277,7 @@ public class CSVFileCalculator implements Runnable {
 				updatedList.add(updatedRow);
 			}
 		}
+		return updatedList;
 	}
 
 
@@ -277,10 +285,9 @@ public class CSVFileCalculator implements Runnable {
 	 * This function adds the implementation for the threads to process the csv files.
 	 */
 	public void run() {
-		// TODO Auto-generated method stub
-		this.readCSV(inputFilePath);
-		this.calculate(engineName, csvData);
-		this.writeCSV(outputFileName, csvData);
+		ArrayList<ArrayList<String>>csvData = this.readCSV(inputFilePath);
+		ArrayList<ArrayList<String>> csvUpdatedData = this.calculate(engineName, csvData);
+		this.writeCSV(outputFilePath, csvUpdatedData);
 
 	}
 
