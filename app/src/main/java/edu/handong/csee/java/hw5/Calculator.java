@@ -59,7 +59,7 @@ public class Calculator {
 	 */
 	public void run(String[] args) throws MyNumberFormatException, OneInputException, NegativeNumberException, MinimumInputNumberException, InvalidCommandException {
 		try {
-			
+
 			OptionHandler optionHandler = new OptionHandler();
 			Options options = optionHandler.createOptions();
 
@@ -72,14 +72,14 @@ public class Calculator {
 				System.exit(1);
 			}
 
-			
+
 			/*if (args.length==0){
 				throw new InvalidCommandException("Exception-01: Invalid command: \n"
 						+ "Please put a computing engine option such as LCM, GCD, SQRT, FACTORIAL, FIBONACCI, MAX, MIN, CUBEVOL, and SPHEREVOL. For example, ./app  MAX 12 4 5 45 100");
 			}*/
-			
-			
-			
+
+
+
 			String engineName = optionHandler.getTask();
 			if (engineName==null) {
 				//optionHandler.printHelp(options);
@@ -88,8 +88,8 @@ public class Calculator {
 			else {
 				engineName=engineName.toUpperCase();
 			}
-			
-			
+
+
 			Computable engine =null;
 
 			switch(engineName) {
@@ -130,9 +130,9 @@ public class Calculator {
 					System.exit(1);
 				}	
 			}
-			
-			
-			
+
+
+
 			//When -v option is provided for any engine and no files
 			if (optionHandler.getInputValues()!=null && optionHandler.getDataInputFilePath()==null && optionHandler.getDataOutputFilePath()==null) {
 				String[] values = optionHandler.getInputValues().split("\\s+");
@@ -151,42 +151,51 @@ public class Calculator {
 				engine.setInput(inputs);
 				engine.compute();
 			}
-			
+
 
 
 			// if the data input and output file paths are provided
 			else if (optionHandler.getDataInputFilePath() != null && optionHandler.getDataOutputFilePath() != null && optionHandler.getInputValues() == null) {
-			    ArrayList<CSVFileCalculator> calculators = new ArrayList<>(); //array of CSVFileCalculator instances for each of the files
+				ArrayList<CSVFileCalculator> calculators = new ArrayList<>(); //array of CSVFileCalculator instances for each of the files
 
-			    File inputFile = new File(optionHandler.getDataInputFilePath());
-			    File outputFile = new File(optionHandler.getDataOutputFilePath());
-			    
-			    File[] files = inputFile.listFiles();
-			    int numFiles = files.length;
-		        int numThreads = files.length;
-			    Thread[] threads = new Thread[numThreads];
-			    
-			    //if the inputPath is a directory
-			    if (inputFile.isDirectory()) {
-			        // Process all files in the directory
+				File inputFile = new File(optionHandler.getDataInputFilePath());
+				File outputFile = new File(optionHandler.getDataOutputFilePath());
 
-			        if (files != null && files.length > 0) {
-			            for (File file : files) {
-			                if (file.isFile()) {
-			                    // Create a CSVFileCalculator instance for each file
-			                    CSVFileCalculator calculator = new CSVFileCalculator(engineName,inputFile, file, outputFile);
-			                    calculators.add(calculator); //add new calculator to the array of CSVFile Calculators
-			                    Thread thread = new Thread(calculator);
-			                    thread.start();
-			                }
-			            }
-			        }
-			    
-			        //if the input path is filePath
-			    } else if (inputFile.isFile()) {
-			    	
+				File[] files = inputFile.listFiles();
+				int numFiles = files.length;
+				int numThreads = files.length;
+				Thread[] threads = new Thread[numThreads];
+
+				//if the inputPath is a directory
+				if (inputFile.isDirectory()) {
+					// Process all files in the directory
+
+					if (files != null && files.length > 0) {
+						for (File file : files) {
+							if (file.isFile()) {
+								// Create a CSVFileCalculator instance for each file
+								CSVFileCalculator calculator = new CSVFileCalculator(engineName,inputFile, file, outputFile);
+								calculators.add(calculator); //add new calculator to the array of CSVFile Calculators
+								Thread thread = new Thread(calculator);
+								thread.start();
+							}
+						}
+					}
+//					for (Thread thread : threads) {
+//						try {
+//							thread.join();
+//						} catch (InterruptedException e) {
+//							// Handle interrupted exception
+//							e.printStackTrace();
+//							return;
+//						}
+//					}
+
+					//if the input path is filePath
+				} else if (inputFile.isFile()) {
+
 					//when SQRT engine is used
-			    	if (engineName.equals("SQRT")) {
+					if (engineName.equals("SQRT")) {
 						ArrayList<String> list = FileManager.readLinesFromATxtFile(optionHandler.getDataInputFilePath());
 						ArrayList<String> updatedList = new ArrayList<String>();
 						//adding headers to the list
@@ -200,17 +209,17 @@ public class Calculator {
 								String[] inputNumber = {engineName, array[j]};
 								engine.setInput(inputNumber);
 								engine.compute();
-								
+
 								if (j == array.length - 1) {
-						            row.append(String.valueOf(engine.getResult()));
-						        } else {
-						            row.append(String.valueOf(engine.getResult())).append(",");
-						        }
-								
+									row.append(String.valueOf(engine.getResult()));
+								} else {
+									row.append(String.valueOf(engine.getResult())).append(",");
+								}
+
 							}
 							updatedList.add(row.toString());
 						}
-						
+
 						FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
 					}
 
@@ -218,9 +227,9 @@ public class Calculator {
 					else if (engineName.equals("MAX")) {
 						ArrayList<String> list = FileManager.readLinesFromATxtFile(optionHandler.getDataInputFilePath());
 						ArrayList<String> updatedList = new ArrayList<String>();
-					    
+
 						updatedList.add(list.get(0)+","+"MAX");
-					    
+
 						for (int i=1; i<list.size(); i++) {
 							String[] array = list.get(i).split(",");
 							String[] inputNumber = new String[array.length + 1];
@@ -232,37 +241,37 @@ public class Calculator {
 							int result = (int) engine.getResult();
 							updatedList.add(list.get(i)+","+String.valueOf(result));
 						}
-						
-						FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
-					}
-					
-			    	//when Min option is used
-					else if (engineName.equals("MIN")) {
-						ArrayList<String> list = FileManager.readLinesFromATxtFile(optionHandler.getDataInputFilePath());
-						ArrayList<String> updatedList = new ArrayList<String>();
-					    
-						updatedList.add(list.get(0)+","+"MIN");
-					    
-						for (int i=1; i<list.size(); i++) {
-							String[] array = list.get(i).split(",");
-							String[] inputNumber = new String[array.length + 1];
-							inputNumber[0] = engineName;
-							// Copy the original elements starting from index 0 to index 1
-							System.arraycopy(array, 0, inputNumber, 1, array.length);
-							engine.setInput(inputNumber);
-							engine.compute();
-							int result = (int) engine.getResult();
-							updatedList.add(list.get(i)+","+String.valueOf(result));
-						}
-						
+
 						FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
 					}
 
-			    }
-			    else {
-			    	optionHandler.printHelp(options);
+					//when Min option is used
+					else if (engineName.equals("MIN")) {
+						ArrayList<String> list = FileManager.readLinesFromATxtFile(optionHandler.getDataInputFilePath());
+						ArrayList<String> updatedList = new ArrayList<String>();
+
+						updatedList.add(list.get(0)+","+"MIN");
+
+						for (int i=1; i<list.size(); i++) {
+							String[] array = list.get(i).split(",");
+							String[] inputNumber = new String[array.length + 1];
+							inputNumber[0] = engineName;
+							// Copy the original elements starting from index 0 to index 1
+							System.arraycopy(array, 0, inputNumber, 1, array.length);
+							engine.setInput(inputNumber);
+							engine.compute();
+							int result = (int) engine.getResult();
+							updatedList.add(list.get(i)+","+String.valueOf(result));
+						}
+
+						FileManager.writeAtxtFile(optionHandler.getDataOutputFilePath(), updatedList);
+					}
+
+				}
+				else {
+					optionHandler.printHelp(options);
 					System.exit(1);
-			    }
+				}
 			}
 
 			//all the other scenarios 
@@ -270,15 +279,15 @@ public class Calculator {
 				optionHandler.printHelp(options);
 				System.exit(1);
 			}
-			
-			
+
+
 			//in the end, if the -v option was used, the result is printed out 
 			if (optionHandler.getInputValues()!=null) {
 				System.out.println("The result of " +  engineName + " is " + engine.getResult() + ".");
 			}
-			
-			
-			
+
+
+
 		}catch (InvalidCommandException e) {
 			System.out.println(e.getMessage());
 		}catch (OneInputException e) {
@@ -289,7 +298,7 @@ public class Calculator {
 			System.out.println(e.getMessage());
 		} catch (NumberFormatException e) {
 			System.out.println(e.getMessage());
-	    } 
+		} 
 	}
 
 }

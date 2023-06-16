@@ -15,6 +15,8 @@ import org.apache.commons.csv.CSVRecord;
 
 import edu.handong.csee.java.hw5.clioptions.OptionHandler;
 import edu.handong.csee.java.hw5.engines.Computable;
+import edu.handong.csee.java.hw5.exceptions.MyNumberFormatException;
+import edu.handong.csee.java.hw5.exceptions.NegativeNumberException;
 
 
 /**
@@ -46,7 +48,6 @@ public class CSVFileCalculator implements Runnable {
 		
 		outputFileName = inputFileName + "-" + outputFileName + ".csv";
 		this.outputFilePath = directoryPath.getAbsolutePath() + "\\" + outputFileName;
-		System.out.println(outputFilePath);
 		this.engineName = engineName;
 	}
 
@@ -200,8 +201,9 @@ public class CSVFileCalculator implements Runnable {
 	 * The calculated values are updated in the CSV data.
 	 * @param engineName the name of the calculation engine
 	 * @param csvData the CSV data to perform calculations on
+	 * @throws NegativeNumberException 
 	 */
-	public  ArrayList<ArrayList<String>> calculate(String engineName, ArrayList<ArrayList<String>> csvData) { //a method for calculating SQRT, MAX, and MIN tasks
+	public  ArrayList<ArrayList<String>> calculate(String engineName, ArrayList<ArrayList<String>> csvData) throws NegativeNumberException { //a method for calculating SQRT, MAX, and MIN tasks
 		ArrayList<ArrayList<String>> updatedList = new ArrayList<>();
 
 
@@ -217,12 +219,18 @@ public class CSVFileCalculator implements Runnable {
 				for (int j = 0; j < row.size(); j++) {
 					String value = row.get(j);
 					try {
+						if (Double.valueOf(value) < 0){
+				            throw new NegativeNumberException("Exception-03: The input value cannot be negative for " + engineName+ ".");}
 						double number = Double.parseDouble(value);
 						double sqrt = Math.sqrt(number);
 						updatedRow.add(String.valueOf(sqrt));
 					} catch (NumberFormatException e) {
 						// Handle non-numeric values if needed
 						updatedRow.add(value);
+						throw new MyNumberFormatException("Exception-05: The input value should be converted into a number. ("  + value + " is not a number value for " + engineName +".)");
+					}catch (NegativeNumberException e) {
+						// TODO Auto-generated catch block
+						System.err.println(e.getMessage());
 					}
 				}
 
@@ -247,6 +255,7 @@ public class CSVFileCalculator implements Runnable {
 						min = Math.min(min, number);
 					} catch (NumberFormatException e) {
 						// Handle non-numeric values if needed
+						throw new MyNumberFormatException("Exception-05: The input value should be converted into a number. ("  + value + " is not a number value for " + engineName +".)");
 					}
 				}
 
@@ -270,12 +279,13 @@ public class CSVFileCalculator implements Runnable {
 						max = Math.max(max, number);
 					} catch (NumberFormatException e) {
 						// Handle non-numeric values if needed
-					}
+						throw new MyNumberFormatException("Exception-05: The input value should be converted into a number. ("  + value + " is not a number value for " + engineName +".)");
 				}
 
 				updatedRow.add(String.valueOf(max)); // Add max value at the end
 				updatedList.add(updatedRow);
 			}
+		}
 		}
 		return updatedList;
 	}
@@ -286,9 +296,15 @@ public class CSVFileCalculator implements Runnable {
 	 */
 	public void run() {
 		ArrayList<ArrayList<String>>csvData = this.readCSV(inputFilePath);
-		ArrayList<ArrayList<String>> csvUpdatedData = this.calculate(engineName, csvData);
+		ArrayList<ArrayList<String>> csvUpdatedData;
+		try {
+			csvUpdatedData = this.calculate(engineName, csvData);
+		} catch (NegativeNumberException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return;
+		}
 		this.writeCSV(outputFilePath, csvUpdatedData);
-
 	}
 
 }
